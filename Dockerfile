@@ -22,11 +22,26 @@ ENV JETTY_HOME=/opt/jetty-home \
 RUN  apt-get update \
   && apt-get install -y wget 
 
+
+ARG TARGETOS
+ARG TARGETARCH
+
+RUN echo "Building for $TARGETOS/$TARGETARCH"
+
 # Download Java, verify the hash, and install
-RUN wget -q https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u345-b01/OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz \
-   && tar -zxvf OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz -C /opt \
-   && echo 2422a8831fe414b9dba4c443ee3562431dfcde27577124f0db58ec903afc262a OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz | sha256sum -c \
-   && mv /opt/jdk8u345-b01-jre /opt/jre-home
+RUN if [ "$TARGETOS" = "linux" -a "$TARGETARCH" = "amd64" ]; then \
+      wget -q https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u345-b01/OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz \
+       && tar -zxvf OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz -C /opt \
+       && echo 2422a8831fe414b9dba4c443ee3562431dfcde27577124f0db58ec903afc262a OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz | sha256sum -c \
+       && mv /opt/jdk8u345-b01-jre /opt/jre-home; \
+    elif [ "$TARGETOS" = "linux" -a "$TARGETARCH" = "arm64v8" ]; then \
+      wget -q https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u345-b01/OpenJDK8U-jre_aarch64_linux_hotspot_8u345b01.tar.gz \
+       && tar -zxvf OpenJDK8U-jre_aarch64_linux_hotspot_8u345b01.tar.gz -C /opt \
+       && echo 65b8bd74382d6514d2458ff4375468651791a55a186a5bffe0803204801e9c94 OpenJDK8U-jre_aarch64_linux_hotspot_8u345b01.tar.gz | sha256sum -c \
+       && mv /opt/jdk8u345-b01-jre /opt/jre-home; \   
+    else \
+      echo "Error: unsupported architecture: $TARGETOS/$TARGETARCH" && exit 1; \
+    fi
 
 # Download Jetty, verify the hash, and install, initialize a new base
 RUN wget -q https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-distribution/$jetty_version/jetty-distribution-$jetty_version.tar.gz \
