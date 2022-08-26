@@ -1,9 +1,9 @@
 FROM ubuntu:focal as temp
 
-ENV java_version=8.0.212 \
-    zulu_version=8.38.0.13 \
-    java_hash=14136019014c020fee0fc13073d00388 \
-    jetty_version=9.3.27.v20190418 \
+ARG TARGETOS
+ARG TARGETARCH
+
+ENV jetty_version=9.3.27.v20190418 \
     jetty_hash=7c7c80dd1c9f921771e2b1a05deeeec652d5fcaa \
     idp_version=3.4.3 \
     idp_hash=eb86bc7b6366ce2a44f97cae1b014d307b84257e3149469b22b2d091007309db \
@@ -21,10 +21,6 @@ ENV JETTY_HOME=/opt/jetty-home \
 
 RUN  apt-get update \
   && apt-get install -y wget 
-
-
-ARG TARGETOS
-ARG TARGETARCH
 
 RUN echo "Building for $TARGETOS/$TARGETARCH"
 
