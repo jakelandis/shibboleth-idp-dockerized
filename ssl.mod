@@ -13,7 +13,8 @@ etc/jetty-ssl.xml
 etc/jetty-ssl-context.xml
 
 [files]
-https://github.com/eclipse/jetty.project/raw/jetty-9.3.x/jetty-server/src/main/config/etc/keystore|etc/keystore
+# keystore originally sourced from https://github.com/eclipse/jetty.project/raw/jetty-9.3.x/jetty-server/src/main/config/etc/keystore
+/opt/shib-jetty-base/etc/keystore
 
 [ini-template]
 ### TLS(SSL) Connector Configuration

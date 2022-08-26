@@ -37,7 +37,7 @@ RUN wget -q https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-distrib
 
 RUN mkdir -p /opt/shib-jetty-base/modules 
 COPY ssl.mod /opt/shib-jetty-base/modules/ssl.mod
-copy keystore /opt/jetty-home/etc/keystore
+COPY keystore /opt/shib-jetty-base/etc/keystore
 
 # Config Jetty
 RUN mkdir -p /opt/shib-jetty-base/modules /opt/shib-jetty-base/lib/ext  /opt/shib-jetty-base/lib/logging /opt/shib-jetty-base/resources \
