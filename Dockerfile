@@ -25,9 +25,8 @@ RUN  apt-get update \
 # Download Java, verify the hash, and install
 RUN wget -q https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u345-b01/OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz \
    && tar -zxvf OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz -C /opt \
+   && echo 2422a8831fe414b9dba4c443ee3562431dfcde27577124f0db58ec903afc262a OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz | sha256sum -c \
    && mv /opt/jdk8u345-b01-jre /opt/jre-home
-   ## TODO - check checksum
-
 
 # Download Jetty, verify the hash, and install, initialize a new base
 RUN wget -q https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-distribution/$jetty_version/jetty-distribution-$jetty_version.tar.gz \
