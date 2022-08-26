@@ -1,4 +1,4 @@
-FROM centos:centos7 as temp
+FROM ubuntu:focal as temp
 
 ENV java_version=8.0.212 \
     zulu_version=8.38.0.13 \
@@ -19,15 +19,15 @@ ENV JETTY_HOME=/opt/jetty-home \
     JETTY_BASE=/opt/shib-jetty-base \
     PATH=$PATH:$JRE_HOME/bin
 
-RUN yum -y update \
-    && yum -y install wget tar which \
-    && yum -y clean all
+RUN  apt-get update \
+  && apt-get install -y wget 
 
 # Download Java, verify the hash, and install
-RUN wget -q http://cdn.azul.com/zulu/bin/zulu$zulu_version-ca-jdk$java_version-linux_x64.tar.gz \
-    && echo "$java_hash  zulu$zulu_version-ca-jdk$java_version-linux_x64.tar.gz" | md5sum -c - \
-    && tar -zxvf zulu$zulu_version-ca-jdk$java_version-linux_x64.tar.gz -C /opt \
-    && ln -s /opt/zulu$zulu_version-ca-jdk$java_version-linux_x64/jre/ /opt/jre-home
+RUN wget -q https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u345-b01/OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz \
+   && tar -zxvf OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz -C /opt \
+   && mv /opt/jdk8u345-b01-jre /opt/jre-home
+   ## TODO - check checksum
+
 
 # Download Jetty, verify the hash, and install, initialize a new base
 RUN wget -q https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-distribution/$jetty_version/jetty-distribution-$jetty_version.tar.gz \
@@ -91,7 +91,7 @@ RUN mkdir /opt/shib-jetty-base/logs \
     && chmod -R 640 /opt/shib-jetty-base \
     && chmod -R 750 /opt/shibboleth-idp/bin
     
-FROM centos:centos7
+FROM ubuntu:focal
 
 LABEL maintainer="Elastic"\
       idp.java.version="8.0.212" \
@@ -105,9 +105,6 @@ ENV JETTY_HOME=/opt/jetty-home \
     JETTY_BACKCHANNEL_SSL_KEYSTORE_PASSWORD=changeme \
     PATH=$PATH:$JRE_HOME/bin
 
-RUN yum -y update \
-    && yum -y install which \
-    && yum -y clean all
 
 COPY bin/ /usr/local/bin/
 
